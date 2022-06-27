@@ -9,6 +9,7 @@ class SearchScreenController extends GetxController {
   var cryptoData = CryptoModel().obs;
   var isLoading = false.obs;
   var datumList = <Datum>[].obs;
+  var namesList = <String>[].obs;
 
   // @override
   // void onInit() {
@@ -16,13 +17,18 @@ class SearchScreenController extends GetxController {
   // }
 
   Future<void> fetchCryptoDataList(String names) async {
+    namesList.clear();
+
+    namesList.value = names.split(',');
     try {
       isLoading(true);
       final response = await http.get(Uri.parse(Constant.cryptoUrl + names),
           headers: {
             "X-CMC_PRO_API_KEY": "27ab17d1-215f-49e5-9ca4-afd48810c149"
           });
+
       var data = jsonDecode(response.body);
+
       cryptoData.value = CryptoModel.fromJson(data);
     } on SocketException {
       Get.snackbar('Error', 'Check your internet connection');
